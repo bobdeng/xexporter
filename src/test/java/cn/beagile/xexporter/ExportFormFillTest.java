@@ -1,10 +1,12 @@
 package cn.beagile.xexporter;
 
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -127,8 +129,11 @@ class ExportFormFillTest {
                 }
                 """;
         ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
-        exportForm.write(new FileOutputStream("temp.xls"));
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副学历生.xls")));
+
+        exportForm.export(templateInputStream, new FileOutputStream("temp.xls"));
     }
+
     @Test
     void 导出Excel2003() throws IOException {
         String json = """
@@ -247,8 +252,11 @@ class ExportFormFillTest {
                 }
                 """;
         ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
-        exportForm.write(new FileOutputStream("temp.xlsx"));
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副学历生.xlsx")));
+
+        exportForm.export(templateInputStream, new FileOutputStream("temp.xlsx"));
     }
+
     @Test
     void 导出100() throws IOException {
         String json = """
@@ -262,8 +270,10 @@ class ExportFormFillTest {
                   }
                 }
                 """;
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副学历生.xls")));
+
         ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
-        exportForm.write(new FileOutputStream("temp.xlsx"));
+        exportForm.export(templateInputStream,new FileOutputStream("temp.xlsx"));
     }
 
     @SneakyThrows
@@ -556,6 +566,7 @@ class ExportFormFillTest {
         ExportWithCells exportForm = new Gson().fromJson(json, ExportWithCells.class);
         exportForm.export(new FileOutputStream("temp.xlsx"));
     }
+
     @AfterEach
     public void tearDown() {
         new java.io.File("temp.xlsx").delete();

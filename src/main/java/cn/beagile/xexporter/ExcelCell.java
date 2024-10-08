@@ -13,11 +13,6 @@ public class ExcelCell {
     private int fontSize = 14;
     private Font font;
 
-    public ExcelCell(String content) {
-
-        this.content = content;
-    }
-
     public ExcelCell(String content, int width, int fontSize) {
         this.content = content;
         this.width = width;

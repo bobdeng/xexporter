@@ -1,6 +1,8 @@
 package cn.beagile.xexporter;
 
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -11,10 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ExportFormTest {
     private ExportWithTemplate exportForm;
     private static String tempFile = "temp.xlsx";
+    private ByteArrayInputStream templateInputStream;
 
+    @SneakyThrows
     @BeforeEach
     public void setup() {
         String json = """
@@ -44,6 +45,7 @@ class ExportFormTest {
                     }
                 """;
         exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
+
     }
 
     @AfterEach
@@ -63,27 +65,27 @@ class ExportFormTest {
 
     @Test
     public void should_export_to_excel() throws IOException {
-        exportForm.setTemplate("测试空");
+        templateInputStream = getTemplateInputStream("template/测试空.xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("");
     }
 
     @Test
     public void should_export_one() throws IOException {
-        exportForm.setTemplate("测试一个值");
+        templateInputStream = getTemplateInputStream("template/测试一个值.xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("海洋学院");
     }
 
     @Test
     public void should_export_deep_array() throws IOException {
-        exportForm.setTemplate("测试获取深度字段");
+        templateInputStream = getTemplateInputStream("template/测试获取深度字段.xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("班级1\n" +
                 "班级2");
@@ -92,18 +94,19 @@ class ExportFormTest {
 
     @Test
     public void should_export_array() throws IOException {
-        exportForm.setTemplate("测试一个数组值");
+        templateInputStream = getTemplateInputStream("template/测试一个数组值.xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("张三\n李四");
     }
 
     @Test
     public void should_export_2array() throws IOException {
-        exportForm.setTemplate("测试2个数组值");
+        String template = "测试2个数组值";
+        templateInputStream = getTemplateInputStream("template/" + template + ".xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("""
                 姓名,年龄,备注
@@ -116,11 +119,15 @@ class ExportFormTest {
                 """);
     }
 
+    private static ByteArrayInputStream getTemplateInputStream(String template) throws IOException {
+        return new ByteArrayInputStream(Resources.toByteArray(Resources.getResource(template)));
+    }
+
     @Test
     public void should_export_mix() throws IOException {
-        exportForm.setTemplate("测试混合");
+        templateInputStream = getTemplateInputStream("template/测试混合.xlsx");
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("""
                 ,名称：海洋学院2泉州
@@ -165,6 +172,7 @@ class ExportFormTest {
         }
         return "";
     }
+
     @Test
     void 重建公式() {
         String formula = "IF(LEN($A2)=18,MID($A2,7,4)&-MID($A2,11,2)&-MID($A2,13,2),(IF(LEN($A2)=15,19&MID($A2,7,2)&-MID($A2,9,2)&-MID($A2,11,2),\"\")))";

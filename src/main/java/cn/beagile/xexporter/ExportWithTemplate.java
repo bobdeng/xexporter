@@ -1,8 +1,6 @@
 package cn.beagile.xexporter;
 
 import com.google.common.io.Resources;
-import com.google.gson.Gson;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import lombok.Data;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -12,8 +10,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -22,25 +18,12 @@ import java.util.stream.IntStream;
 
 @Data
 public class ExportWithTemplate {
-    private String name;
-    private String template;
-    private Map data;
-    private Object document;
-    private FillConfig config;
-    private String type;
+    private Object data;
     private String excelType;
     private static final Pattern placeholderPattern = Pattern.compile("≮[^≯]*≯");
 
-    public void write(OutputStream outputStream) throws IOException {
-        if ("fill".equals(type)) {
-            this.fill(outputStream);
-            return;
-        }
-        this.append(outputStream);
-    }
-
-    public void append(OutputStream outputStream) throws IOException {
-        Workbook workbook = readWorkbookFromTemplate();
+    public void export(ByteArrayInputStream templateInputStream, OutputStream outputStream) throws IOException {
+        Workbook workbook = readWorkbookFromTemplate(templateInputStream);
         Sheet sheet = workbook.getSheetAt(0);
         expandAllArrayPlaceholders(sheet);
         fillAllPlaceholders(sheet);
@@ -82,9 +65,9 @@ public class ExportWithTemplate {
         }
     }
 
-    private Workbook readWorkbookFromTemplate() {
-        Supplier<Workbook> xlsxWorkbook = this::getXlsxWorkbook;
-        Supplier<Workbook> xlsWorkbook = this::getXlsWorkbook;
+    private Workbook readWorkbookFromTemplate(ByteArrayInputStream templateInputStream) {
+        Supplier<Workbook> xlsxWorkbook = () -> getXlsxWorkbook(templateInputStream);
+        Supplier<Workbook> xlsWorkbook = () -> getXlsWorkbook(templateInputStream);
         return isXlsx() ? xlsxWorkbook.get() : xlsWorkbook.get();
     }
 
@@ -95,19 +78,18 @@ public class ExportWithTemplate {
         return "xlsx".equals(excelType);
     }
 
-    private Workbook getXlsxWorkbook() {
+    private Workbook getXlsxWorkbook(ByteArrayInputStream templateInputStream) {
         try {
-            return new XSSFWorkbook(new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/" + template + ".xlsx"))));
+            return new XSSFWorkbook(templateInputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    private Workbook getXlsWorkbook() {
+    private Workbook getXlsWorkbook(ByteArrayInputStream templateInputStream) {
         try {
-            byte[] byteArray = Resources.toByteArray(Resources.getResource("template/" + template + ".xls"));
-            return new HSSFWorkbook(new ByteArrayInputStream(byteArray));
+            return new HSSFWorkbook(templateInputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -139,7 +121,7 @@ public class ExportWithTemplate {
         String name = removeDecoration(cell.getStringCellValue());
         name = name.substring(0, name.indexOf("[]"));
         String jsonPath = "$." + name + ".length()";
-        return JsonPath.read(getDocument(), jsonPath);
+        return JsonPath.read(this.data, jsonPath);
     }
 
     public String getSingleValueFromJson(String name) {
@@ -152,17 +134,10 @@ public class ExportWithTemplate {
 
     public String readStringFromJson(String name) {
         try {
-            return JsonPath.read(getDocument(), "$." + name).toString();
+            return JsonPath.read(this.data, "$." + name).toString();
         } catch (Exception e) {
             return "";
         }
-    }
-
-    private Object getDocument() {
-        if (document == null) {
-            document = Configuration.defaultConfiguration().jsonProvider().parse(new Gson().toJson(data));
-        }
-        return document;
     }
 
     private void fillRow(Row row) {
@@ -303,24 +278,6 @@ public class ExportWithTemplate {
     }
 
 
-    public void fill(OutputStream outputStream) throws IOException {
-        Workbook workbook = readWorkbookFromTemplate();
-        Sheet sheet = workbook.getSheetAt(0);
-        for (int i = 0; i < 400; i++) {
-            String name = getSingleValueFromJson("≮" + this.config.listName + "[" + i + "]." + this.config.columns.get(0).name + "≯");
-            if (name.isEmpty()) {
-                break;
-            }
-            for (FillColumn column : this.config.columns) {
-                Row row = sheet.getRow(i + 1);
-                Cell cell = row.getCell(column.index);
-                String value = getSingleValueFromJson("≮" + this.config.listName + "[" + i + "]." + column.name + "≯");
-                cell.setCellValue(value);
-            }
-        }
-        writeWorkbook(outputStream, workbook);
-    }
-
     public String rebuildFormula(String formula, int originRowIndex, int rowIndex) {
         String previousRowName = "" + (originRowIndex + 1);
         String rowName = "" + (rowIndex + 1);
@@ -332,27 +289,5 @@ public class ExportWithTemplate {
             formula = matcher.replaceAll(column + rowName);
         }
         return formula;
-    }
-
-    @Data
-    public static class FillConfig {
-        private List<FillColumn> columns;
-        private String listName;
-
-        public FillConfig(List<FillColumn> columns, String listName) {
-            this.columns = columns;
-            this.listName = listName;
-        }
-    }
-
-    @Data
-    public static class FillColumn {
-        private int index;
-        private String name;
-
-        public FillColumn(int index, String name) {
-            this.index = index;
-            this.name = name;
-        }
     }
 }

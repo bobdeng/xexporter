@@ -1,13 +1,14 @@
 package cn.beagile.xexporter;
 
+import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 class ExportAnotherTest {
@@ -76,9 +77,10 @@ class ExportAnotherTest {
 
     @SneakyThrows
     @Test
-    public void export() throws FileNotFoundException {
+    public void export() {
         FileOutputStream outputStream = new FileOutputStream(tempFile);
-        exportForm.append(outputStream);
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副.xlsx")));
+        exportForm.export(templateInputStream,outputStream);
     }
 
 }
