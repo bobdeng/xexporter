@@ -21,22 +21,17 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 @Data
-public class ExportForm {
+public class ExportWithTemplate {
     private String name;
     private String template;
     private Map data;
     private Object document;
     private FillConfig config;
     private String type;
-    private ExcelExport excel;
     private String excelType;
     private static final Pattern placeholderPattern = Pattern.compile("≮[^≯]*≯");
 
     public void write(OutputStream outputStream) throws IOException {
-        if (this.excel != null) {
-            this.excel.export(outputStream);
-            return;
-        }
         if ("fill".equals(type)) {
             this.fill(outputStream);
             return;

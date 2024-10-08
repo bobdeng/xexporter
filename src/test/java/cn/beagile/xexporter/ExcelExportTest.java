@@ -13,7 +13,7 @@ class ExcelExportTest {
     @SneakyThrows
     @Test
     void 只有一个单元格() {
-        ExcelExport excelExport = new ExcelExport();
+        ExportWithCells excelExport = new ExportWithCells();
         ExcelRow row = new ExcelRow();
         row.setHeight(50);
         excelExport.addRow(row);
@@ -24,7 +24,7 @@ class ExcelExportTest {
 
     @Test
     void 有夸多列的单元格单元格() throws IOException {
-        ExcelExport excelExport = new ExcelExport();
+        ExportWithCells excelExport = new ExportWithCells();
         ExcelRow row = new ExcelRow();
         row.setHeight(30);
         excelExport.addRow(row);

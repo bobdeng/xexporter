@@ -126,7 +126,7 @@ class ExportFormFillTest {
                   }
                 }
                 """;
-        ExportForm exportForm = new Gson().fromJson(json, ExportForm.class);
+        ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
         exportForm.write(new FileOutputStream("temp.xls"));
     }
     @Test
@@ -246,7 +246,7 @@ class ExportFormFillTest {
                   }
                 }
                 """;
-        ExportForm exportForm = new Gson().fromJson(json, ExportForm.class);
+        ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
         exportForm.write(new FileOutputStream("temp.xlsx"));
     }
     @Test
@@ -262,7 +262,7 @@ class ExportFormFillTest {
                   }
                 }
                 """;
-        ExportForm exportForm = new Gson().fromJson(json, ExportForm.class);
+        ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
         exportForm.write(new FileOutputStream("temp.xlsx"));
     }
 
@@ -270,7 +270,6 @@ class ExportFormFillTest {
     @Test
     void 通过单元格导出() {
         String json = """
-                {"excel":
                 {
                   "mergeRanges": [
                     {
@@ -553,10 +552,9 @@ class ExportFormFillTest {
                     }
                   ]
                 }
-                }
                 """;
-        ExportForm exportForm = new Gson().fromJson(json, ExportForm.class);
-        exportForm.write(new FileOutputStream("temp.xlsx"));
+        ExportWithCells exportForm = new Gson().fromJson(json, ExportWithCells.class);
+        exportForm.export(new FileOutputStream("temp.xlsx"));
     }
     @AfterEach
     public void tearDown() {

@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 class ExportAnotherTest {
-    private ExportForm exportForm;
+    private ExportWithTemplate exportForm;
     private static String tempFile= "temp.xlsx";
 
     @BeforeEach
@@ -66,7 +66,7 @@ class ExportAnotherTest {
                   }
                 }
                 """;
-        exportForm = new Gson().fromJson(json, ExportForm.class);
+        exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
     }
 
     @AfterEach

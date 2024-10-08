@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ExportFormTest {
-    private ExportForm exportForm;
+    private ExportWithTemplate exportForm;
     private static String tempFile = "temp.xlsx";
 
     @BeforeEach
@@ -43,7 +43,7 @@ class ExportFormTest {
                       }
                     }
                 """;
-        exportForm = new Gson().fromJson(json, ExportForm.class);
+        exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
     }
 
     @AfterEach

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class ExcelExport {
+public class ExportWithCells {
     private List<ExcelRow> rows = new ArrayList<>();
     private List<MergeRange> mergeRanges = new ArrayList<>();
 
