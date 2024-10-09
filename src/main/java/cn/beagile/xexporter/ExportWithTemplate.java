@@ -1,8 +1,6 @@
 package cn.beagile.xexporter;
 
-import com.google.common.io.Resources;
 import com.jayway.jsonpath.JsonPath;
-import lombok.Data;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-@Data
 public class ExportWithTemplate {
     private Object data;
     private String excelType;

@@ -18,13 +18,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
     implementation 'org.apache.poi:poi-ooxml:4.1.2'
-    implementation "com.google.guava:guava:28.1-jre"
+    testImplementation "com.google.guava:guava:28.1-jre"
     implementation 'com.jayway.jsonpath:json-path:2.8.0'
     implementation 'com.google.code.gson:gson:2.10'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    annotationProcessor('org.projectlombok:lombok:1.18.26')
-    testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
-    implementation('org.projectlombok:lombok:1.18.26')
     testImplementation('org.assertj:assertj-core:3.19.0')
 }
 

@@ -2,11 +2,11 @@ package cn.beagile.xexporter;
 
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -276,9 +276,8 @@ class ExportFormFillTest {
         exportForm.export(templateInputStream,new FileOutputStream("temp.xlsx"));
     }
 
-    @SneakyThrows
     @Test
-    void 通过单元格导出() {
+    void 通过单元格导出() throws IOException {
         String json = """
                 {
                   "mergeRanges": [

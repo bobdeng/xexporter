@@ -1,12 +1,6 @@
 package cn.beagile.xexporter;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ExcelCell {
     private String content;
     private int width = 10;
@@ -19,8 +13,47 @@ public class ExcelCell {
         this.fontSize = fontSize;
     }
 
-    @Data
+    public String getContent() {
+        return content;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
     public static class Font {
         private String color;
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
     }
 }

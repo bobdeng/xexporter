@@ -1,6 +1,5 @@
 package cn.beagile.xexporter;
 
-import lombok.Data;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -13,7 +12,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 public class ExportWithCells {
     private List<ExcelRow> rows = new ArrayList<>();
     private List<MergeRange> mergeRanges = new ArrayList<>();

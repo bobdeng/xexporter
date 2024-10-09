@@ -1,18 +1,17 @@
 package cn.beagile.xexporter;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 
 class ExcelExportTest {
-    @SneakyThrows
     @Test
-    void 只有一个单元格() {
+    void 只有一个单元格() throws IOException {
         ExportWithCells excelExport = new ExportWithCells();
         ExcelRow row = new ExcelRow();
         row.setHeight(50);

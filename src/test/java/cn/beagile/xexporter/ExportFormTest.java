@@ -2,7 +2,6 @@ package cn.beagile.xexporter;
 
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
-import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,7 +24,6 @@ class ExportFormTest {
     private static String tempFile = "temp.xlsx";
     private ByteArrayInputStream templateInputStream;
 
-    @SneakyThrows
     @BeforeEach
     public void setup() {
         String json = """

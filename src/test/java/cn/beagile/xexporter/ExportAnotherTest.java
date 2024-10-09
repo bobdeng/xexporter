@@ -2,14 +2,11 @@ package cn.beagile.xexporter;
 
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 
 class ExportAnotherTest {
     private ExportWithTemplate exportForm;
@@ -75,9 +72,8 @@ class ExportAnotherTest {
         new File(tempFile).delete();
     }
 
-    @SneakyThrows
     @Test
-    public void export() {
+    public void export() throws IOException {
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副.xlsx")));
         exportForm.export(templateInputStream,outputStream);
