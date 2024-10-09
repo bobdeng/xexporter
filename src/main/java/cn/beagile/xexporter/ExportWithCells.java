@@ -20,6 +20,9 @@ public class ExportWithCells {
         rows.add(row);
     }
 
+    public ExportWithCells() {
+    }
+
     public void export(OutputStream outputStream) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet1");

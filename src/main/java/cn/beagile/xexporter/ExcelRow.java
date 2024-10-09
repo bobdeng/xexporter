@@ -28,4 +28,6 @@ public class ExcelRow {
         this.height = height;
     }
 
+    public ExcelRow() {
+    }
 }

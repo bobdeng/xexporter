@@ -50,4 +50,7 @@ public class MergeRange {
     public void setLastCol(int lastCol) {
         this.lastCol = lastCol;
     }
+
+    public MergeRange() {
+    }
 }
