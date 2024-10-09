@@ -17,6 +17,16 @@ import java.util.stream.IntStream;
 public class ExportWithTemplate {
     private Object data;
     private String excelType;
+
+    public ExportWithTemplate(Object data, String excelType) {
+        this.data = data;
+        this.excelType = excelType;
+    }
+
+    public ExportWithTemplate() {
+    }
+    
+
     private static final Pattern placeholderPattern = Pattern.compile("≮[^≯]*≯");
 
     public void export(ByteArrayInputStream templateInputStream, OutputStream outputStream) throws IOException {
