@@ -5,8 +5,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -25,11 +25,11 @@ public class ExportWithTemplate {
 
     public ExportWithTemplate() {
     }
-    
+
 
     private static final Pattern placeholderPattern = Pattern.compile("≮[^≯]*≯");
 
-    public void export(ByteArrayInputStream templateInputStream, OutputStream outputStream) throws IOException {
+    public void export(InputStream templateInputStream, OutputStream outputStream) throws IOException {
         Workbook workbook = readWorkbookFromTemplate(templateInputStream);
         Sheet sheet = workbook.getSheetAt(0);
         expandAllArrayPlaceholders(sheet);
@@ -72,7 +72,7 @@ public class ExportWithTemplate {
         }
     }
 
-    private Workbook readWorkbookFromTemplate(ByteArrayInputStream templateInputStream) {
+    private Workbook readWorkbookFromTemplate(InputStream templateInputStream) {
         Supplier<Workbook> xlsxWorkbook = () -> getXlsxWorkbook(templateInputStream);
         Supplier<Workbook> xlsWorkbook = () -> getXlsWorkbook(templateInputStream);
         return isXlsx() ? xlsxWorkbook.get() : xlsWorkbook.get();
@@ -85,7 +85,7 @@ public class ExportWithTemplate {
         return "xlsx".equals(excelType);
     }
 
-    private Workbook getXlsxWorkbook(ByteArrayInputStream templateInputStream) {
+    private Workbook getXlsxWorkbook(InputStream templateInputStream) {
         try {
             return new XSSFWorkbook(templateInputStream);
         } catch (IOException e) {
@@ -94,7 +94,7 @@ public class ExportWithTemplate {
 
     }
 
-    private Workbook getXlsWorkbook(ByteArrayInputStream templateInputStream) {
+    private Workbook getXlsWorkbook(InputStream templateInputStream) {
         try {
             return new HSSFWorkbook(templateInputStream);
         } catch (IOException e) {

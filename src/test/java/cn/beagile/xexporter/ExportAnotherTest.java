@@ -10,13 +10,12 @@ import java.io.*;
 
 class ExportAnotherTest {
     private ExportWithTemplate exportForm;
-    private static String tempFile= "temp.xlsx";
+    private static String tempFile = "temp.xlsx";
 
     @BeforeEach
     public void setup() {
         String json = """
                 {
-                  "name": "202301期船长班级学员-三管副.xlsx",
                   "template": "三管副",
                   "data": {
                     "list": [
@@ -76,7 +75,7 @@ class ExportAnotherTest {
     public void export() throws IOException {
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副.xlsx")));
-        exportForm.export(templateInputStream,outputStream);
+        exportForm.export(templateInputStream, outputStream);
     }
 
 }
