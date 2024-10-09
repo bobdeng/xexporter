@@ -69,4 +69,20 @@ public class ExportWithCells {
     public void addMergeRange(MergeRange mergeRange) {
         mergeRanges.add(mergeRange);
     }
+
+    public List<ExcelRow> getRows() {
+        return rows;
+    }
+
+    public void setRows(List<ExcelRow> rows) {
+        this.rows = rows;
+    }
+
+    public List<MergeRange> getMergeRanges() {
+        return mergeRanges;
+    }
+
+    public void setMergeRanges(List<MergeRange> mergeRanges) {
+        this.mergeRanges = mergeRanges;
+    }
 }
