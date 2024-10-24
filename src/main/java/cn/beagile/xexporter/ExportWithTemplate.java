@@ -270,7 +270,7 @@ public class ExportWithTemplate {
         if (cell.getCellType().equals(CellType.FORMULA)) {
             return;
         }
-        Cell targetCell = target.createCell(cellIndex);
+        Cell targetCell = target.getCell(cellIndex);
         switch (cell.getCellType()) {
             case NUMERIC -> targetCell.setCellValue(cell.getNumericCellValue());
             case BOOLEAN -> targetCell.setCellValue(cell.getBooleanCellValue());

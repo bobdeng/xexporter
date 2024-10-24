@@ -129,9 +129,9 @@ class ExportFormTest {
         outputStream.close();
         assertExcelContent("""
                 ,名称：海洋学院2泉州
-                ,姓名,年龄
-                ,张三,18.0
-                ,李四,19.0
+                ,姓名,年龄,固定
+                ,张三,18.0,固定的值
+                ,李四,19.0,固定的值
                 """);
     }
 
