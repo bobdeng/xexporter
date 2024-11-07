@@ -51,6 +51,10 @@ public class ExcelCell {
     public static class Font {
         private String color;
 
+        public Font(String color) {
+            this.color = color;
+        }
+
         public String getColor() {
             return color;
         }

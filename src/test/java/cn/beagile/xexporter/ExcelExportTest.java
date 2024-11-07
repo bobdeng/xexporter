@@ -17,6 +17,18 @@ class ExcelExportTest {
         row.setHeight(50);
         excelExport.addRow(row);
         ExcelCell cell = new ExcelCell("这是一个单元格,,很长很长很长", 30, 14);
+        cell.setFont(new ExcelCell.Font("RED"));
+        row.addCell(cell);
+        excelExport.export(new FileOutputStream("test.xlsx"));
+    }
+    @Test
+    void 只有一个单元格_颜色为空() throws IOException {
+        ExportWithCells excelExport = new ExportWithCells();
+        ExcelRow row = new ExcelRow();
+        row.setHeight(50);
+        excelExport.addRow(row);
+        ExcelCell cell = new ExcelCell("这是一个单元格,,很长很长很长", 30, 14);
+        cell.setFont(new ExcelCell.Font(null));
         row.addCell(cell);
         excelExport.export(new FileOutputStream("test.xlsx"));
     }

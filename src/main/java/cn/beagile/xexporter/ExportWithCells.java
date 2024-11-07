@@ -38,7 +38,10 @@ public class ExportWithCells {
                 XSSFFont font = workbook.createFont();
                 font.setFontHeightInPoints((short) cell.getFontSize());
                 if (cell.getFont() != null) {
-                    font.setColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(cell.getFont().getColor()).getIndex());
+                    String color = cell.getFont().getColor();
+                    if (color != null) {
+                        font.setColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(color).getIndex());
+                    }
                 }
                 cellStyle.setFont(font);
                 BorderStyle border = BorderStyle.THIN;
