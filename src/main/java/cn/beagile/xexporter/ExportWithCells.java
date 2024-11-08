@@ -44,6 +44,10 @@ public class ExportWithCells {
                     }
                 }
                 cellStyle.setFont(font);
+                if (cell.getBgColor() != null) {
+                    cellStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(cell.getBgColor()).getIndex());
+                    cellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+                }
                 BorderStyle border = BorderStyle.THIN;
                 cellStyle.setBorderBottom(border);
                 cellStyle.setBorderLeft(border);

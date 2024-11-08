@@ -6,6 +6,7 @@ public class ExcelCell {
     private int width = 10;
     private int fontSize = 14;
     private Font font;
+    private String bgColor;
 
     public ExcelCell() {
     }
@@ -42,6 +43,14 @@ public class ExcelCell {
 
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
     }
 
     public void setFont(Font font) {
