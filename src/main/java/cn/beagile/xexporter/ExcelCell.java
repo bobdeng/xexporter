@@ -4,7 +4,7 @@ package cn.beagile.xexporter;
 public class ExcelCell {
     private String content;
     private int width = 10;
-    private int fontSize = 14;
+    private int fontSize = 9;
     private Font font;
     private String bgColor;
 
