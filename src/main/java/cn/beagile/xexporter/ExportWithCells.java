@@ -25,7 +25,12 @@ public class ExportWithCells {
 
     public void export(OutputStream outputStream) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Sheet1");
+        export(workbook, "Sheet1");
+        workbook.write(outputStream);
+    }
+
+    public void export(XSSFWorkbook workbook, String sheetName) throws IOException {
+        XSSFSheet sheet = workbook.createSheet(sheetName);
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
             org.apache.poi.xssf.usermodel.XSSFRow sheetRow = sheet.createRow(i);
@@ -73,7 +78,6 @@ public class ExportWithCells {
                         System.out.println(mergeRange);
                     }
                 });
-        workbook.write(outputStream);
     }
 
     public void addMergeRange(MergeRange mergeRange) {

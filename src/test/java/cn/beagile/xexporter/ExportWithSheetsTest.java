@@ -1,0 +1,31 @@
+package cn.beagile.xexporter;
+
+import org.junit.jupiter.api.Test;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+class ExportWithSheetsTest {
+    @Test
+    public void export_with_sheets() throws IOException {
+        ExportWithSheets sheets = new ExportWithSheets();
+        sheets.setSheets(List.of(getExcelSheet("123"),getExcelSheet("234")));
+        sheets.export(new FileOutputStream("test.xlsx"));
+    }
+
+    private static ExcelSheet getExcelSheet(String name) {
+        ExportWithCells excelExport = new ExportWithCells();
+        ExcelRow row = new ExcelRow();
+        row.setHeight(50);
+        excelExport.addRow(row);
+        ExcelCell cell = new ExcelCell("这是一个单元格,,很长很长很长", 30, 14);
+//        cell.setFont(new ExcelCell.Font("RED"));
+        cell.setBgColor("GREEN");
+        row.addCell(cell);
+        ExcelSheet sheet1 = new ExcelSheet();
+        sheet1.setName(name);
+        sheet1.setCells(excelExport);
+        return sheet1;
+    }
+}
