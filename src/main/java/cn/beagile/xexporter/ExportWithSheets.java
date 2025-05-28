@@ -4,6 +4,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 public class ExportWithSheets {
@@ -17,7 +18,7 @@ public class ExportWithSheets {
         this.sheets = sheets;
     }
 
-    public void export(FileOutputStream outputStream) throws IOException {
+    public void export(OutputStream outputStream) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         sheets.forEach(excelSheet -> {
             try {
