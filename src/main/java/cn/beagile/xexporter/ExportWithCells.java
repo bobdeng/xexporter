@@ -59,7 +59,6 @@ public class ExportWithCells {
                 cellStyle.setBorderRight(border);
                 cellStyle.setBorderTop(border);
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
-                cellStyle.setWrapText(true);
                 sheetCell.setCellStyle(cellStyle);
                 sheetCell.setCellValue(cell.getContent());
 
