@@ -39,7 +39,7 @@ public class ExportWithCells {
             for (int j = 0; j < cells.size(); j++) {
                 ExcelCell cell = cells.get(j);
                 org.apache.poi.xssf.usermodel.XSSFCell sheetCell = sheetRow.createCell(j);
-                CellStyle cellStyle = workbook.createCellStyle();
+//                CellStyle cellStyle = workbook.createCellStyle();
                 XSSFFont font = workbook.createFont();
                 font.setFontHeightInPoints((short) cell.getFontSize());
                 if (cell.getFont() != null) {
@@ -48,18 +48,18 @@ public class ExportWithCells {
                         font.setColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(color).getIndex());
                     }
                 }
-                cellStyle.setFont(font);
-                if (cell.getBgColor() != null) {
-                    cellStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(cell.getBgColor()).getIndex());
-                    cellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
-                }
-                BorderStyle border = BorderStyle.THIN;
-                cellStyle.setBorderBottom(border);
-                cellStyle.setBorderLeft(border);
-                cellStyle.setBorderRight(border);
-                cellStyle.setBorderTop(border);
-                cellStyle.setAlignment(HorizontalAlignment.CENTER);
-                sheetCell.setCellStyle(cellStyle);
+//                cellStyle.setFont(font);
+//                if (cell.getBgColor() != null) {
+//                    cellStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(cell.getBgColor()).getIndex());
+//                    cellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+//                }
+//                BorderStyle border = BorderStyle.THIN;
+//                cellStyle.setBorderBottom(border);
+//                cellStyle.setBorderLeft(border);
+//                cellStyle.setBorderRight(border);
+//                cellStyle.setBorderTop(border);
+//                cellStyle.setAlignment(HorizontalAlignment.CENTER);
+//                sheetCell.setCellStyle(cellStyle);
                 sheetCell.setCellValue(cell.getContent());
 
                 int cellWidth = cell.getWidth() * 256;
