@@ -1,6 +1,8 @@
 package cn.beagile.xexporter;
 
 
+import java.text.NumberFormat;
+
 public class ExcelCell {
     private String content;
     private int width = 10;
@@ -66,13 +68,18 @@ public class ExcelCell {
         if (content == null || content.isEmpty()) {
             return 0;
         }
-        if ("number".equals(type)) {
+        try {
+            if ("number".equals(type)) {
+                return Double.parseDouble(content.replace(",", ""));
+            }
+            if ("percent".equals(type)) {
+                return Double.parseDouble(content.replace("%", "")) / 100;
+            }
             return Double.parseDouble(content.replace(",", ""));
+        } catch (Exception e) {
+            // If parsing fails, return 0
+            return 0;
         }
-        if ("percent".equals(type)) {
-            return Double.parseDouble(content.replace("%", "")) / 100;
-        }
-        return Double.parseDouble(content.replace(",", ""));
     }
 
     public static class Font {
