@@ -7,6 +7,11 @@ public class ExcelCell {
     private int fontSize = 9;
     private Font font;
     private String bgColor;
+    private String type = "string"; // default type is string
+
+    public boolean isNumber() {
+        return "number".equals(type) || "percent".equals(type);
+    }
 
     public ExcelCell() {
     }
@@ -57,6 +62,19 @@ public class ExcelCell {
         this.font = font;
     }
 
+    public double doubleValue() {
+        if (content == null || content.isEmpty()) {
+            return 0;
+        }
+        if ("number".equals(type)) {
+            return Double.parseDouble(content.replace(",", ""));
+        }
+        if ("percent".equals(type)) {
+            return Double.parseDouble(content.replace("%", "")) / 100;
+        }
+        return Double.parseDouble(content.replace(",", ""));
+    }
+
     public static class Font {
         private String color;
 
@@ -74,5 +92,13 @@ public class ExcelCell {
         public void setColor(String color) {
             this.color = color;
         }
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

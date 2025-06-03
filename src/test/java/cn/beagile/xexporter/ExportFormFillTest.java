@@ -123,7 +123,7 @@ class ExportFormFillTest {
                         "index": 0,
                         "name": "student.register.idNumber"
                       }
-                      
+                
                     ]
                   }
                 }
@@ -246,7 +246,7 @@ class ExportFormFillTest {
                         "index": 0,
                         "name": "student.register.idNumber"
                       }
-                      
+                
                     ]
                   }
                 }
@@ -273,7 +273,7 @@ class ExportFormFillTest {
         ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副学历生.xls")));
 
         ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
-        exportForm.export(templateInputStream,new FileOutputStream("temp.xlsx"));
+        exportForm.export(templateInputStream, new FileOutputStream("temp.xlsx"));
     }
 
     @Test
@@ -339,14 +339,16 @@ class ExportFormFillTest {
                           "width": 20
                         },
                         {
-                          "content": "",
+                          "content": "123,222.12",
                           "fontSize": 12,
-                          "width": 20
+                          "width": 20,
+                          "type": "number"
                         },
                         {
-                          "content": "",
+                          "content": "24.22%",
                           "fontSize": 12,
-                          "width": 20
+                          "width": 20,
+                            "type": "percent"
                         },
                         {
                           "content": "",
@@ -474,14 +476,16 @@ class ExportFormFillTest {
                           "width": 20
                         },
                         {
-                          "content": "张艺",
+                          "content": "23%",
                           "fontSize": 12,
-                          "width": 20
+                          "width": 20,
+                          "type":"percent"
                         },
                         {
-                          "content": "64",
+                          "content": "123,344.23",
                           "fontSize": 12,
-                          "width": 20
+                          "width": 20,
+                           "type":"number"
                         },
                         {
                           "content": "缺考",
@@ -499,7 +503,8 @@ class ExportFormFillTest {
                         {
                           "content": "58.75",
                           "fontSize": 12,
-                          "width": 20
+                          "width": 20,
+                          "type":"number"
                         },
                         {
                           "content": "不及格",
@@ -520,6 +525,7 @@ class ExportFormFillTest {
                           "content": "任课老师/通过率（%）",
                           "fontSize": 12,
                           "width": 20
+                
                         },
                         {
                           "content": "",
@@ -568,8 +574,8 @@ class ExportFormFillTest {
 
     @AfterEach
     public void tearDown() {
-        new java.io.File("temp.xlsx").delete();
-        new java.io.File("temp.xls").delete();
+//        new java.io.File("temp.xlsx").delete();
+//        new java.io.File("temp.xls").delete();
     }
 
 }

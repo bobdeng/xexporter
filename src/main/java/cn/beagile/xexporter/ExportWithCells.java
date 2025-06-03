@@ -60,7 +60,14 @@ public class ExportWithCells {
 //                cellStyle.setBorderTop(border);
 //                cellStyle.setAlignment(HorizontalAlignment.CENTER);
 //                sheetCell.setCellStyle(cellStyle);
-                sheetCell.setCellValue(cell.getContent());
+
+                if (cell.isNumber()) {
+                    sheetCell.setCellValue(cell.doubleValue());
+                    sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
+                } else {
+                    sheetCell.setCellValue(cell.getContent());
+                    sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
+                }
 
                 int cellWidth = cell.getWidth() * 256;
                 if (sheet.getColumnWidth(j) < cellWidth) {
