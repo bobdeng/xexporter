@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,6 +18,7 @@ public class ExportWithCells {
     private List<ExcelRow> rows = new ArrayList<>();
     private List<MergeRange> mergeRanges = new ArrayList<>();
 
+
     public void addRow(ExcelRow row) {
         rows.add(row);
     }
@@ -26,14 +28,16 @@ public class ExportWithCells {
 
     public void export(OutputStream outputStream) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        Font font = workbook.createFont();
-        font.setFontName("Arial");  // 避免使用生僻字体
-        CellStyle style = workbook.createCellStyle();
-        style.setFont(font);
+
         workbook.write(outputStream);
     }
 
     public void export(XSSFWorkbook workbook, String sheetName) throws IOException {
+        Font font = workbook.createFont();
+        font.setFontName("Arial");  // 避免使用生僻字体
+        XSSFCellStyle style;
+        style = workbook.createCellStyle();
+        style.setFont(font);
         XSSFSheet sheet = workbook.createSheet(sheetName);
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
@@ -43,28 +47,6 @@ public class ExportWithCells {
             for (int j = 0; j < cells.size(); j++) {
                 ExcelCell cell = cells.get(j);
                 org.apache.poi.xssf.usermodel.XSSFCell sheetCell = sheetRow.createCell(j);
-//                CellStyle cellStyle = workbook.createCellStyle();
-                XSSFFont font = workbook.createFont();
-                font.setFontHeightInPoints((short) cell.getFontSize());
-                if (cell.getFont() != null) {
-                    String color = cell.getFont().getColor();
-                    if (color != null) {
-                        font.setColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(color).getIndex());
-                    }
-                }
-//                cellStyle.setFont(font);
-//                if (cell.getBgColor() != null) {
-//                    cellStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.valueOf(cell.getBgColor()).getIndex());
-//                    cellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
-//                }
-//                BorderStyle border = BorderStyle.THIN;
-//                cellStyle.setBorderBottom(border);
-//                cellStyle.setBorderLeft(border);
-//                cellStyle.setBorderRight(border);
-//                cellStyle.setBorderTop(border);
-//                cellStyle.setAlignment(HorizontalAlignment.CENTER);
-//                sheetCell.setCellStyle(cellStyle);
-
                 if (cell.isNumber()) {
                     sheetCell.setCellValue(cell.doubleValue());
                     sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
@@ -72,7 +54,7 @@ public class ExportWithCells {
                     sheetCell.setCellValue(cell.getContent());
                     sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
                 }
-
+                sheetCell.setCellStyle(style);
                 int cellWidth = cell.getWidth() * 256;
                 if (sheet.getColumnWidth(j) < cellWidth) {
                     sheet.setColumnWidth(j, cellWidth);
