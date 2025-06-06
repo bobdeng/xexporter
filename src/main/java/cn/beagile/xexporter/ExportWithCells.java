@@ -33,11 +33,6 @@ public class ExportWithCells {
     }
 
     public void export(XSSFWorkbook workbook, String sheetName) throws IOException {
-        Font font = workbook.createFont();
-        font.setFontName("Arial");  // 避免使用生僻字体
-        XSSFCellStyle style;
-        style = workbook.createCellStyle();
-        style.setFont(font);
         XSSFSheet sheet = workbook.createSheet(sheetName);
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
@@ -54,7 +49,6 @@ public class ExportWithCells {
                     sheetCell.setCellValue(cell.getContent());
                     sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
                 }
-                sheetCell.setCellStyle(style);
                 int cellWidth = cell.getWidth() * 256;
                 if (sheet.getColumnWidth(j) < cellWidth) {
                     sheet.setColumnWidth(j, cellWidth);
