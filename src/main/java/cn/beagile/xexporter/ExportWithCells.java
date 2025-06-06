@@ -2,6 +2,7 @@ package cn.beagile.xexporter;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -25,7 +26,10 @@ public class ExportWithCells {
 
     public void export(OutputStream outputStream) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        export(workbook, "Sheet1");
+        Font font = workbook.createFont();
+        font.setFontName("Arial");  // 避免使用生僻字体
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(font);
         workbook.write(outputStream);
     }
 
