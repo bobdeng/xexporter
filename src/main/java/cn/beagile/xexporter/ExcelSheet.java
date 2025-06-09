@@ -7,6 +7,7 @@ import java.util.List;
 
 public class ExcelSheet {
     private String name;
+    private boolean active;
     private ExportWithCells cells;
 
     public String getName() {
@@ -27,5 +28,13 @@ public class ExcelSheet {
 
     public void export(XSSFWorkbook workbook) throws IOException {
         cells.export(workbook, name);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

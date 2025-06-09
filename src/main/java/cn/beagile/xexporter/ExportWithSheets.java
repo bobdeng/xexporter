@@ -2,7 +2,6 @@ package cn.beagile.xexporter;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -27,6 +26,11 @@ public class ExportWithSheets {
                 throw new RuntimeException(e);
             }
         });
+        for (int i = 0; i < sheets.size(); i++) {
+            if (sheets.get(i).isActive()) {
+                workbook.setActiveSheet(i);
+            }
+        }
         workbook.write(outputStream);
     }
 }
