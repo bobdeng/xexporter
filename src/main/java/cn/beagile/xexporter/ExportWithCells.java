@@ -1,6 +1,8 @@
 package cn.beagile.xexporter;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,8 +31,8 @@ public class ExportWithCells {
         workbook.write(outputStream);
     }
 
-    public void export(Workbook workbook, String sheetName) throws IOException {
-        Sheet sheet = workbook.createSheet(sheetName);
+    public void export(SXSSFWorkbook workbook, String sheetName) throws IOException {
+        SXSSFSheet sheet = workbook.createSheet(sheetName);
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
             Row sheetRow = sheet.createRow(i);
@@ -50,6 +52,9 @@ public class ExportWithCells {
                 if (sheet.getColumnWidth(j) < cellWidth) {
                     sheet.setColumnWidth(j, cellWidth);
                 }
+            }
+            if (i % 1000 == 0) {
+                sheet.flushRows(1000);
             }
         }
         mergeRanges
