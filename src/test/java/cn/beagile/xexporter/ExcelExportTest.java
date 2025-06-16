@@ -22,6 +22,7 @@ class ExcelExportTest {
         row.addCell(cell);
         excelExport.export(new FileOutputStream("test.xlsx"));
     }
+
     @Test
     void 只有一个单元格_颜色为空() throws IOException {
         ExportWithCells excelExport = new ExportWithCells();
@@ -45,6 +46,7 @@ class ExcelExportTest {
         excelExport.addMergeRange(new MergeRange(0, 0, 0, 2));
         excelExport.export(new FileOutputStream("test.xlsx"));
     }
+
     @AfterEach
     public void tearDown() {
         new File("test.xlsx").delete();

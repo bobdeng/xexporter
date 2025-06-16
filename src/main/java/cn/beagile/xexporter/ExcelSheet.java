@@ -1,5 +1,6 @@
 package cn.beagile.xexporter;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class ExcelSheet {
         this.cells = cells;
     }
 
-    public void export(XSSFWorkbook workbook) throws IOException {
+    public void export(Workbook workbook) throws IOException {
         cells.export(workbook, name);
     }
 

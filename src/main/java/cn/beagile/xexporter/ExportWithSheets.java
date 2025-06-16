@@ -1,5 +1,6 @@
 package cn.beagile.xexporter;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class ExportWithSheets {
     }
 
     public void export(OutputStream outputStream) throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
         sheets.forEach(excelSheet -> {
             try {
                 excelSheet.export(workbook);

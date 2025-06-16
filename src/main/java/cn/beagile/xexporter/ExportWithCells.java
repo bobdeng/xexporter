@@ -1,9 +1,6 @@
 package cn.beagile.xexporter;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,16 +29,16 @@ public class ExportWithCells {
         workbook.write(outputStream);
     }
 
-    public void export(XSSFWorkbook workbook, String sheetName) throws IOException {
-        XSSFSheet sheet = workbook.createSheet(sheetName);
+    public void export(Workbook workbook, String sheetName) throws IOException {
+        Sheet sheet = workbook.createSheet(sheetName);
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
-            org.apache.poi.xssf.usermodel.XSSFRow sheetRow = sheet.createRow(i);
+            Row sheetRow = sheet.createRow(i);
             sheetRow.setHeightInPoints((short) row.getHeight());
             List<ExcelCell> cells = row.getCells();
             for (int j = 0; j < cells.size(); j++) {
                 ExcelCell cell = cells.get(j);
-                org.apache.poi.xssf.usermodel.XSSFCell sheetCell = sheetRow.createCell(j);
+                Cell sheetCell = sheetRow.createCell(j);
                 if (cell.isNumber()) {
                     sheetCell.setCellValue(cell.doubleValue());
                     sheetCell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
