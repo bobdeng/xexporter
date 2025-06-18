@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ExportWithCells {
     private List<ExcelRow> rows = new ArrayList<>();
@@ -32,10 +33,12 @@ public class ExportWithCells {
     }
 
     public void export(SXSSFWorkbook workbook, String sheetName) throws IOException {
-        SXSSFSheet sheet = workbook.createSheet(sheetName);
+        SXSSFSheet sheet = Optional.ofNullable(workbook.getSheet(sheetName))
+                .orElseGet(() -> workbook.createSheet(sheetName));
+        int start = sheet.getLastRowNum() + 1;
         for (int i = 0; i < rows.size(); i++) {
             ExcelRow row = rows.get(i);
-            Row sheetRow = sheet.createRow(i);
+            Row sheetRow = sheet.createRow(start + i);
             sheetRow.setHeightInPoints((short) row.getHeight());
             List<ExcelCell> cells = row.getCells();
             for (int j = 0; j < cells.size(); j++) {
@@ -57,6 +60,7 @@ public class ExportWithCells {
                 sheet.flushRows(1000);
             }
         }
+        sheet.flushRows(1000);
         mergeRanges
                 .stream().filter(MergeRange::needMerge)
                 .forEach(mergeRange -> {

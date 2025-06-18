@@ -1,5 +1,6 @@
 package cn.beagile.xexporter;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
@@ -12,6 +13,16 @@ class ExportWithSheetsTest {
         ExportWithSheets sheets = new ExportWithSheets();
         sheets.setSheets(List.of(getExcelSheet("123", false), getExcelSheet("234", true)));
         sheets.export(new FileOutputStream("test.xlsx"));
+    }
+    @Test
+    public void export_with_sheets_append() throws IOException {
+        ExportWithSheets sheets = new ExportWithSheets();
+        sheets.setSheets(List.of(getExcelSheet("123", false), getExcelSheet("234", true)));
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        sheets.write(workbook);
+        sheets.write(workbook);
+        workbook.write(new FileOutputStream("test.xlsx"));
+        workbook.close();
     }
 
     private static ExcelSheet getExcelSheet(String name, boolean active) {
