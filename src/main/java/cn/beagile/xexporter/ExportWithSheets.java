@@ -20,18 +20,7 @@ public class ExportWithSheets {
 
     public void export(OutputStream outputStream) throws IOException {
         try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
-            sheets.forEach(excelSheet -> {
-                try {
-                    excelSheet.export(workbook);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            for (int i = 0; i < sheets.size(); i++) {
-                if (sheets.get(i).isActive()) {
-                    workbook.setActiveSheet(i);
-                }
-            }
+            write(workbook);
             workbook.write(outputStream);
         }
     }
@@ -44,10 +33,12 @@ public class ExportWithSheets {
                 throw new RuntimeException(e);
             }
         });
-        for (int i = 0; i < sheets.size(); i++) {
-            if (sheets.get(i).isActive()) {
-                workbook.setActiveSheet(i);
-            }
-        }
+        sheets.stream().filter(ExcelSheet::isActive)
+                .findFirst()
+                .ifPresent(excelSheet -> {
+                    int sheetIndex = workbook.getSheetIndex(excelSheet.getName());
+                    workbook.setActiveSheet(sheetIndex);
+                    workbook.setSelectedTab(sheetIndex);
+                });
     }
 }
