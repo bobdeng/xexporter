@@ -38,6 +38,7 @@ class ExportFormTest {
                         },
                         "name":"海洋学院",
                         "city":"泉州",
+                        "age":18,
                         "list":[{"name":"张三","age":18,"group":{"name":"班级1"}},{"name":"李四","age":19,"group":{"name":"班级2"}}]
                       }
                     }
@@ -48,7 +49,7 @@ class ExportFormTest {
 
     @AfterEach
     public void tearDown() {
-        new File(tempFile).delete();
+//        new File(tempFile).delete();
     }
 
     @Test
@@ -77,6 +78,14 @@ class ExportFormTest {
         exportForm.export(templateInputStream, outputStream);
         outputStream.close();
         assertExcelContent("海洋学院");
+    }
+    @Test
+    public void should_export_one_with_format() throws IOException {
+        templateInputStream = getTemplateInputStream("template/测试一个值_带格式.xlsx");
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+        exportForm.export(templateInputStream, outputStream);
+        outputStream.close();
+        assertExcelContent("18.0");
     }
 
     @Test

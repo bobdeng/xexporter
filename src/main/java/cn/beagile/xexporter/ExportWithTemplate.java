@@ -156,11 +156,19 @@ public class ExportWithTemplate {
     }
 
     private void fillCell(Cell cell) {
+        // 保存原始的单元格样式
+        CellStyle originalStyle = cell.getCellStyle();
+        
         String cellValue = cell.getStringCellValue();
         while (isPlaceholder(cellValue)) {
             cellValue = run(cellValue);
         }
-        cell.setCellValue(cellValue);
+        
+        // 尝试将值转换为合适的类型并设置
+        setCellValueWithTypeDetection(cell, cellValue);
+        
+        // 恢复原始样式
+        cell.setCellStyle(originalStyle);
     }
 
     public String run(String cellValue) {
@@ -296,5 +304,30 @@ public class ExportWithTemplate {
             formula = matcher.replaceAll(column + rowName);
         }
         return formula;
+    }
+
+    private void setCellValueWithTypeDetection(Cell cell, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            cell.setCellValue("");
+            return;
+        }
+        
+        // 尝试转换为数值
+        try {
+            double numericValue = Double.parseDouble(value.trim());
+            cell.setCellValue(numericValue);
+            return;
+        } catch (NumberFormatException e) {
+            // 不是数值，继续检查其他类型
+        }
+        
+        // 尝试转换为布尔值
+        if ("true".equalsIgnoreCase(value.trim()) || "false".equalsIgnoreCase(value.trim())) {
+            cell.setCellValue(Boolean.parseBoolean(value.trim()));
+            return;
+        }
+        
+        // 默认设置为字符串
+        cell.setCellValue(value);
     }
 }
