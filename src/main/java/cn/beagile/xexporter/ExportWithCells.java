@@ -55,6 +55,14 @@ public class ExportWithCells {
                 if (sheet.getColumnWidth(j) < cellWidth) {
                     sheet.setColumnWidth(j, cellWidth);
                 }
+                if (cell.getFont() != null) {
+                    XSSFFont font = (XSSFFont) workbook.createFont();
+                    font.setFontHeightInPoints((short) cell.getFontSize());
+                    font.setColor(IndexedColors.valueOf(cell.getFont().getColor()).index);
+                    XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+                    style.setFont(font);
+                    sheetCell.setCellStyle(style);
+                }
             }
             if (i % 1000 == 0) {
                 sheet.flushRows(1000);
