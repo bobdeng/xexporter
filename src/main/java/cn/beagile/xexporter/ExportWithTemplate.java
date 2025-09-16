@@ -311,7 +311,6 @@ public class ExportWithTemplate {
             cell.setCellValue("");
             return;
         }
-
         cell.setCellValue(value);
     }
 }
