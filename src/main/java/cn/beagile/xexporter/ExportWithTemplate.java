@@ -342,7 +342,8 @@ public class ExportWithTemplate {
 
     /**
      * 处理 images:// 前缀的图片路径
-     * @param cell 目标单元格
+     *
+     * @param cell      目标单元格
      * @param cellValue 格式: images://path1,path2,path3
      */
     private void handleImages(Cell cell, String cellValue) {
@@ -420,7 +421,7 @@ public class ExportWithTemplate {
                 // 读取图片以获取原始尺寸
                 BufferedImage bufferedImage = ImageIO.read(imageFile);
                 if (bufferedImage == null) {
-                    continue;
+                    throw new RuntimeException("图片格式不支持");
                 }
 
                 int originalWidth = bufferedImage.getWidth();
