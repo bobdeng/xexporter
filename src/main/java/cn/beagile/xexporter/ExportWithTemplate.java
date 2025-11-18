@@ -387,16 +387,28 @@ public class ExportWithTemplate {
         int colIndex = cell.getColumnIndex();
         Row row = cell.getRow();
 
-        // 获取单元格的宽度和高度
-        // Excel 列宽单位是字符宽度，行高单位是点(point)
-        int cellWidth = sheet.getColumnWidth(colIndex); // 单位是 1/256 字符宽度
-        float cellHeight = row.getHeightInPoints(); // 单位是点
+        // 检查是否是合并单元格
+        org.apache.poi.ss.util.CellRangeAddress mergedRegion = getMergedRegion(cell);
 
-        // 转换为像素（大约）
-        // 列宽：1 字符 ≈ 7 像素
-        int cellWidthPixels = (int) (cellWidth / 256.0 * 7);
-        // 行高：1 点 ≈ 1.33 像素
-        int cellHeightPixels = (int) (cellHeight * 1.33);
+        int cellWidthPixels;
+        int cellHeightPixels;
+
+        if (mergedRegion != null) {
+            // 如果是合并单元格，计算合并区域的总宽高
+            cellWidthPixels = getMergedRegionWidth(sheet, mergedRegion);
+            cellHeightPixels = getMergedRegionHeight(sheet, mergedRegion);
+        } else {
+            // 如果不是合并单元格，计算单个单元格的宽高
+            // Excel 列宽单位是字符宽度，行高单位是点(point)
+            int cellWidth = sheet.getColumnWidth(colIndex); // 单位是 1/256 字符宽度
+            float cellHeight = row.getHeightInPoints(); // 单位是点
+
+            // 转换为像素（大约）
+            // 列宽：1 字符 ≈ 7 像素
+            cellWidthPixels = (int) (cellWidth / 256.0 * 7);
+            // 行高：1 点 ≈ 1.33 像素
+            cellHeightPixels = (int) (cellHeight * 1.33);
+        }
 
         // 2. 宽高减去10%
         double marginRatio = 0.9; // 保留90%，减去10%
@@ -470,26 +482,107 @@ public class ExportWithTemplate {
                 int verticalMargin = (cellHeightPixels - usableHeight) / 2;
 
                 // 计算起始位置（每张图片占据平均宽度，并居中显示）
-                int startX = horizontalMargin + currentImageIndex * maxImageWidth + (maxImageWidth - scaledWidth) / 2;
+                int startXPixels = horizontalMargin + currentImageIndex * maxImageWidth + (maxImageWidth - scaledWidth) / 2;
                 // 图片在可用高度内垂直居中
-                int startY = verticalMargin + (maxImageHeight - scaledHeight) / 2;
+                int startYPixels = verticalMargin + (maxImageHeight - scaledHeight) / 2;
 
-                // 设置锚点的列和行（图片限制在当前单元格内）
-                anchor.setCol1(colIndex);
-                anchor.setRow1(rowIndex);
-                anchor.setCol2(colIndex);  // 结束列也是当前列，不跨列
-                anchor.setRow2(rowIndex);  // 结束行也是当前行，不跨行
+                // 计算图片右下角的位置（像素）
+                int endXPixels = startXPixels + scaledWidth;
+                int endYPixels = startYPixels + scaledHeight;
 
-                // 设置起始偏移
-                anchor.setDx1(startX * emuPerPixel);
-                anchor.setDy1(startY * emuPerPixel);
+                // 根据像素位置计算实际的单元格和偏移量
+                // 确定起始位置所在的单元格和偏移
+                int startCol = colIndex;
+                int startRow = rowIndex;
+                int dx1 = startXPixels;
+                int dy1 = startYPixels;
 
-                // 设置结束偏移（使用缩放后的实际尺寸）
-                int endX = startX + scaledWidth;
-                int endY = startY + scaledHeight;
+                if (mergedRegion != null) {
+                    // 对于合并单元格，需要找到 startXPixels 落在哪一列
+                    int accumulatedWidth = 0;
+                    for (int col = mergedRegion.getFirstColumn(); col <= mergedRegion.getLastColumn(); col++) {
+                        int colWidthPixels = (int) (sheet.getColumnWidth(col) / 256.0 * 7);
+                        if (accumulatedWidth + colWidthPixels > startXPixels) {
+                            startCol = col;
+                            dx1 = startXPixels - accumulatedWidth;
+                            break;
+                        }
+                        accumulatedWidth += colWidthPixels;
+                    }
 
-                anchor.setDx2(endX * emuPerPixel);
-                anchor.setDy2(endY * emuPerPixel);
+                    // 找到 startYPixels 落在哪一行
+                    int accumulatedHeight = 0;
+                    for (int r = mergedRegion.getFirstRow(); r <= mergedRegion.getLastRow(); r++) {
+                        Row tempRow = sheet.getRow(r);
+                        int rowHeightPixels = 0;
+                        if (tempRow != null) {
+                            rowHeightPixels = (int) (tempRow.getHeightInPoints() * 1.33);
+                        }
+                        if (accumulatedHeight + rowHeightPixels > startYPixels) {
+                            startRow = r;
+                            dy1 = startYPixels - accumulatedHeight;
+                            break;
+                        }
+                        accumulatedHeight += rowHeightPixels;
+                    }
+                }
+
+                // 确定结束位置所在的单元格和偏移
+                int endCol = colIndex;
+                int endRow = rowIndex;
+                int dx2 = endXPixels;
+                int dy2 = endYPixels;
+
+                if (mergedRegion != null) {
+                    // 找到 endXPixels 落在哪一列
+                    int accumulatedWidth = 0;
+                    for (int col = mergedRegion.getFirstColumn(); col <= mergedRegion.getLastColumn(); col++) {
+                        int colWidthPixels = (int) (sheet.getColumnWidth(col) / 256.0 * 7);
+                        if (accumulatedWidth + colWidthPixels > endXPixels) {
+                            endCol = col;
+                            dx2 = endXPixels - accumulatedWidth;
+                            break;
+                        }
+                        accumulatedWidth += colWidthPixels;
+                        // 如果到了最后一列还没找到，说明超出范围，使用最后一列
+                        if (col == mergedRegion.getLastColumn()) {
+                            endCol = col;
+                            dx2 = colWidthPixels;
+                        }
+                    }
+
+                    // 找到 endYPixels 落在哪一行
+                    int accumulatedHeight = 0;
+                    for (int r = mergedRegion.getFirstRow(); r <= mergedRegion.getLastRow(); r++) {
+                        Row tempRow = sheet.getRow(r);
+                        int rowHeightPixels = 0;
+                        if (tempRow != null) {
+                            rowHeightPixels = (int) (tempRow.getHeightInPoints() * 1.33);
+                        }
+                        if (accumulatedHeight + rowHeightPixels > endYPixels) {
+                            endRow = r;
+                            dy2 = endYPixels - accumulatedHeight;
+                            break;
+                        }
+                        accumulatedHeight += rowHeightPixels;
+                        // 如果到了最后一行还没找到，说明超出范围，使用最后一行
+                        if (r == mergedRegion.getLastRow()) {
+                            endRow = r;
+                            dy2 = rowHeightPixels;
+                        }
+                    }
+                }
+
+                // 设置锚点
+                anchor.setCol1(startCol);
+                anchor.setRow1(startRow);
+                anchor.setCol2(endCol);
+                anchor.setRow2(endRow);
+
+                anchor.setDx1(dx1 * emuPerPixel);
+                anchor.setDy1(dy1 * emuPerPixel);
+                anchor.setDx2(dx2 * emuPerPixel);
+                anchor.setDy2(dy2 * emuPerPixel);
 
                 // 插入图片
                 Picture picture = drawing.createPicture(anchor, pictureIdx);
@@ -544,5 +637,60 @@ public class ExportWithTemplate {
                 sheet.addMergedRegion(newMergedRegion);
             }
         }
+    }
+
+    /**
+     * 获取单元格所在的合并区域
+     *
+     * @param cell 单元格
+     * @return 合并区域，如果不在合并区域中则返回 null
+     */
+    private org.apache.poi.ss.util.CellRangeAddress getMergedRegion(Cell cell) {
+        Sheet sheet = cell.getSheet();
+        int rowIndex = cell.getRowIndex();
+        int colIndex = cell.getColumnIndex();
+
+        int numMergedRegions = sheet.getNumMergedRegions();
+        for (int i = 0; i < numMergedRegions; i++) {
+            org.apache.poi.ss.util.CellRangeAddress mergedRegion = sheet.getMergedRegion(i);
+            if (mergedRegion.isInRange(rowIndex, colIndex)) {
+                return mergedRegion;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 计算合并单元格区域的总宽度（像素）
+     *
+     * @param sheet         工作表
+     * @param mergedRegion  合并区域
+     * @return 总宽度（像素）
+     */
+    private int getMergedRegionWidth(Sheet sheet, org.apache.poi.ss.util.CellRangeAddress mergedRegion) {
+        int totalWidth = 0;
+        for (int col = mergedRegion.getFirstColumn(); col <= mergedRegion.getLastColumn(); col++) {
+            int colWidth = sheet.getColumnWidth(col); // 单位是 1/256 字符宽度
+            totalWidth += (int) (colWidth / 256.0 * 7); // 转换为像素
+        }
+        return totalWidth;
+    }
+
+    /**
+     * 计算合并单元格区域的总高度（像素）
+     *
+     * @param sheet         工作表
+     * @param mergedRegion  合并区域
+     * @return 总高度（像素）
+     */
+    private int getMergedRegionHeight(Sheet sheet, org.apache.poi.ss.util.CellRangeAddress mergedRegion) {
+        float totalHeight = 0;
+        for (int row = mergedRegion.getFirstRow(); row <= mergedRegion.getLastRow(); row++) {
+            Row rowObj = sheet.getRow(row);
+            if (rowObj != null) {
+                totalHeight += rowObj.getHeightInPoints(); // 单位是点
+            }
+        }
+        return (int) (totalHeight * 1.33); // 转换为像素
     }
 }
