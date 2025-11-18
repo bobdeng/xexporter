@@ -244,6 +244,9 @@ public class ExportWithTemplate {
         copyRowCells(rowIndex, offset, row, newRow);
 
         copyArrayCells(row, newRow, offset);
+
+        // 复制合并单元格
+        copyMergedRegions(sheet, rowIndex, rowIndex + offset + 1);
     }
 
     private void copyRowCells(int rowIndex, int offset, Row row, Row newRow) {
@@ -510,5 +513,36 @@ public class ExportWithTemplate {
             case "png" -> Workbook.PICTURE_TYPE_PNG;
             default -> -1;
         };
+    }
+
+    /**
+     * 复制源行的合并单元格区域到目标行
+     *
+     * @param sheet     工作表
+     * @param sourceRow 源行索引
+     * @param targetRow 目标行索引
+     */
+    private void copyMergedRegions(Sheet sheet, int sourceRow, int targetRow) {
+        // 获取所有合并单元格区域
+        int numMergedRegions = sheet.getNumMergedRegions();
+
+        // 遍历所有合并单元格区域
+        for (int i = 0; i < numMergedRegions; i++) {
+            org.apache.poi.ss.util.CellRangeAddress mergedRegion = sheet.getMergedRegion(i);
+
+            // 检查合并区域是否涉及源行
+            if (mergedRegion.getFirstRow() == sourceRow && mergedRegion.getLastRow() == sourceRow) {
+                // 创建新的合并区域（同样的列范围，但在目标行）
+                org.apache.poi.ss.util.CellRangeAddress newMergedRegion = new org.apache.poi.ss.util.CellRangeAddress(
+                        targetRow,
+                        targetRow,
+                        mergedRegion.getFirstColumn(),
+                        mergedRegion.getLastColumn()
+                );
+
+                // 添加新的合并区域
+                sheet.addMergedRegion(newMergedRegion);
+            }
+        }
     }
 }
