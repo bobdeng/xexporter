@@ -7,12 +7,15 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -460,9 +463,10 @@ public class ExportWithTemplate {
                     imageBytes = IOUtils.toByteArray(fis);
                 }
 
-                // 确定图片类型
-                int pictureType = getPictureType(imageFile.getName());
+                // 确定图片类型（通过读取内容而非扩展名）
+                int pictureType = getPictureType(imageFile);
                 if (pictureType == -1) {
+                    // 如果打不开或格式不支持，跳过该图片
                     continue;
                 }
 
@@ -597,15 +601,34 @@ public class ExportWithTemplate {
     }
 
     /**
-     * 根据文件扩展名确定图片类型
+     * 通过读取图片内容确定图片类型
+     * 不根据扩展名判断，直接打开图片检测格式
+     * 如果打不开就返回 -1
      */
-    private int getPictureType(String fileName) {
-        String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-        return switch (extension) {
-            case "jpg", "jpeg" -> Workbook.PICTURE_TYPE_JPEG;
-            case "png" -> Workbook.PICTURE_TYPE_PNG;
-            default -> -1;
-        };
+    private int getPictureType(File imageFile) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(imageFile)) {
+            if (iis == null) {
+                return -1;
+            }
+
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (!readers.hasNext()) {
+                return -1;
+            }
+
+            ImageReader reader = readers.next();
+            String formatName = reader.getFormatName().toLowerCase();
+            reader.dispose();
+
+            return switch (formatName) {
+                case "jpeg", "jpg" -> Workbook.PICTURE_TYPE_JPEG;
+                case "png" -> Workbook.PICTURE_TYPE_PNG;
+                default -> -1;
+            };
+        } catch (IOException e) {
+            // 打不开就返回 -1
+            return -1;
+        }
     }
 
     /**
