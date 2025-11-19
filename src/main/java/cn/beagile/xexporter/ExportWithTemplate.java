@@ -147,7 +147,11 @@ public class ExportWithTemplate {
         String name = removeDecoration(cell.getStringCellValue());
         name = name.substring(0, name.indexOf("[]"));
         String jsonPath = "$." + name + ".length()";
-        return JsonPath.read(this.data, jsonPath);
+        try {
+            return JsonPath.read(this.data, jsonPath);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public String getSingleValueFromJson(String name) {
@@ -228,9 +232,10 @@ public class ExportWithTemplate {
 
     private void appendArray(Sheet sheet, int rowIndex) {
         Row row = sheet.getRow(rowIndex);
-        IntStream.range(0, getArrayLengthOfRow(row))
+        int arrayLengthOfRow = getArrayLengthOfRow(row);
+        IntStream.range(0, arrayLengthOfRow)
                 .forEach(i -> appendRow(sheet, rowIndex, i));
-        removeFirstRowAndShiftBelowIt(sheet, rowIndex, row);
+        removeFirstRowAndShiftBelowIt(sheet, rowIndex, row, arrayLengthOfRow);
     }
 
     private void appendRow(Sheet sheet, int rowIndex, int offset) {
@@ -269,8 +274,11 @@ public class ExportWithTemplate {
         return rowIndex + offset + 1 < sheet.getLastRowNum();
     }
 
-    private static void removeFirstRowAndShiftBelowIt(Sheet sheet, int start, Row row) {
+    private static void removeFirstRowAndShiftBelowIt(Sheet sheet, int start, Row row, int arrayLengthOfRow) {
         sheet.removeRow(row);
+        if (arrayLengthOfRow == 0) {
+            return;
+        }
         sheet.shiftRows(start + 1, sheet.getLastRowNum(), -1);
     }
 
@@ -686,8 +694,8 @@ public class ExportWithTemplate {
     /**
      * 计算合并单元格区域的总宽度（像素）
      *
-     * @param sheet         工作表
-     * @param mergedRegion  合并区域
+     * @param sheet        工作表
+     * @param mergedRegion 合并区域
      * @return 总宽度（像素）
      */
     private int getMergedRegionWidth(Sheet sheet, org.apache.poi.ss.util.CellRangeAddress mergedRegion) {
@@ -702,8 +710,8 @@ public class ExportWithTemplate {
     /**
      * 计算合并单元格区域的总高度（像素）
      *
-     * @param sheet         工作表
-     * @param mergedRegion  合并区域
+     * @param sheet        工作表
+     * @param mergedRegion 合并区域
      * @return 总高度（像素）
      */
     private int getMergedRegionHeight(Sheet sheet, org.apache.poi.ss.util.CellRangeAddress mergedRegion) {
