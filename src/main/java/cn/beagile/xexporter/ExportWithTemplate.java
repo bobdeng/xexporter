@@ -264,6 +264,11 @@ public class ExportWithTemplate {
                 continue;
             }
             Cell newCell = newRow.createCell(i, cell.getCellType());
+
+            // 复制单元格样式（包括货币格式等）
+            CellStyle style = cell.getCellStyle();
+            newCell.setCellStyle(style);
+
             if (newCell.getCellType().equals(CellType.FORMULA)) {
                 newCell.setCellFormula(rebuildFormula(cell.getCellFormula(), rowIndex, rowIndex + offset + 1));
             }
@@ -351,7 +356,57 @@ public class ExportWithTemplate {
             cell.setCellValue("");
             return;
         }
+
+        // 检查原始单元格样式是否为数字格式（包括货币、百分比等）
+        CellStyle cellStyle = cell.getCellStyle();
+        short formatIndex = cellStyle.getDataFormat();
+
+        // 判断是否是数字类型的格式
+        // formatIndex >= 1 && formatIndex <= 49 是内置的数字格式
+        // 或者格式字符串中包含数字格式标识符（0, #, ¤等）
+        boolean isNumericFormat = isNumericFormatCode(formatIndex, cell.getSheet().getWorkbook());
+
+        if (isNumericFormat) {
+            // 尝试将字符串转换为数字
+            try {
+                double numericValue = Double.parseDouble(value.trim());
+                cell.setCellValue(numericValue);
+                return;
+            } catch (NumberFormatException e) {
+                // 如果无法转换为数字，仍然设置为字符串
+            }
+        }
+
+        // 默认设置为字符串
         cell.setCellValue(value);
+    }
+
+    /**
+     * 判断格式代码是否为数字格式
+     */
+    private boolean isNumericFormatCode(short formatIndex, Workbook workbook) {
+        // 内置的数字格式代码范围
+        // 1-13: 数字格式
+        // 14-22: 日期时间格式
+        // 37-49: 会计和货币格式
+        if ((formatIndex >= 1 && formatIndex <= 13) ||
+            (formatIndex >= 37 && formatIndex <= 49)) {
+            return true;
+        }
+
+        // 对于自定义格式，检查格式字符串
+        if (formatIndex > 49) {
+            String formatString = workbook.createDataFormat().getFormat(formatIndex);
+            if (formatString != null) {
+                // 检查格式字符串是否包含数字格式标识符
+                // 0, # 表示数字占位符
+                // ¤ 表示货币符号
+                // % 表示百分比
+                return formatString.matches(".*[0#¤%].*");
+            }
+        }
+
+        return false;
     }
 
     /**

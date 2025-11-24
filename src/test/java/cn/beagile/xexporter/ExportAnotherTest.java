@@ -20,6 +20,7 @@ class ExportAnotherTest {
                   "data": {
                     "list": [
                       {
+                        "price":200,
                         "id": "200",
                         "student": {
                           "id": "2",
@@ -45,6 +46,7 @@ class ExportAnotherTest {
                       },
                       {
                         "id": "200",
+                         "price":300,
                         "student": {
                           "id": "200",
                           "register": {
@@ -68,13 +70,19 @@ class ExportAnotherTest {
 
     @AfterEach
     public void tearDown() {
-        new File(tempFile).delete();
+//        new File(tempFile).delete();
     }
 
     @Test
     public void export() throws IOException {
         FileOutputStream outputStream = new FileOutputStream(tempFile);
         ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/三管副.xlsx")));
+        exportForm.export(templateInputStream, outputStream);
+    }
+    @Test
+    public void export_price() throws IOException {
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/测试带格式数组.xlsx")));
         exportForm.export(templateInputStream, outputStream);
     }
 
