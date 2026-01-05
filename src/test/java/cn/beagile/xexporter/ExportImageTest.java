@@ -24,6 +24,7 @@ class ExportImageTest {
                     "list": [
                       {
                         "id": "200",
+                        "publishImages":"images://",
                         "student": {
                           "id": "2",
                           "idCardPic":"images://123456,223456",

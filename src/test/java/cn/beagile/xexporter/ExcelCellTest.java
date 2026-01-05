@@ -22,6 +22,14 @@ class ExcelCellTest {
     }
 
     @Test
+    void parse_double_带千分位() {
+        var cell = new ExcelCell();
+        cell.setContent("4,239%");
+        cell.setType("percent");
+        assertEquals(42.39, cell.doubleValue(), 0.0001);
+    }
+
+    @Test
     void parse_percent() {
         var cell = new ExcelCell();
         cell.setContent("12.00%");

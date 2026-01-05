@@ -73,7 +73,8 @@ public class ExcelCell {
                 return Double.parseDouble(content.replace(",", ""));
             }
             if ("percent".equals(type)) {
-                return Double.parseDouble(content.replace("%", "")) / 100;
+                return Double.parseDouble(content.replace(",", "")
+                        .replace("%", "")) / 100;
             }
             return Double.parseDouble(content.replace(",", ""));
         } catch (Exception e) {
