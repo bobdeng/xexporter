@@ -15,7 +15,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -344,9 +346,15 @@ public class ExportWithTemplate {
         String regex = "([A-Z]+)" + previousRowName;
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(formula);
+        List<String> columns = new ArrayList<>();
         while (matcher.find()) {
             String column = matcher.group(1);
-            formula = matcher.replaceAll(column + rowName);
+            columns.add(column);
+        }
+        for (String column : columns) {
+            String oldRef = column + previousRowName;
+            String newRef = column + rowName;
+            formula = formula.replace(oldRef, newRef);
         }
         return formula;
     }
