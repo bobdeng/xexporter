@@ -269,7 +269,7 @@ public class ExportWithTemplate {
             CellStyle style = cell.getCellStyle();
             newCell.setCellStyle(style);
 
-            if (newCell.getCellType().equals(CellType.FORMULA)) {
+            if (cell.getCellType().equals(CellType.FORMULA)) {
                 newCell.setCellFormula(rebuildFormula(cell.getCellFormula(), rowIndex, rowIndex + offset + 1));
             }
         }
@@ -390,7 +390,7 @@ public class ExportWithTemplate {
         // 14-22: 日期时间格式
         // 37-49: 会计和货币格式
         if ((formatIndex >= 1 && formatIndex <= 13) ||
-            (formatIndex >= 37 && formatIndex <= 49)) {
+                (formatIndex >= 37 && formatIndex <= 49)) {
             return true;
         }
 

@@ -275,6 +275,28 @@ class ExportFormFillTest {
         ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
         exportForm.export(templateInputStream, new FileOutputStream("temp.xlsx"));
     }
+    @Test
+    void 导出带公式() throws IOException {
+        String json = """
+                {
+                  "template": "报价单-其他",
+                  "excelType": "xlsx",
+                  "data": {
+                    "list": [
+                        {
+                            "platform":"抖音",
+                            "info":{
+                            }
+                        }
+                    ]
+                  }
+                }
+                """;
+        ByteArrayInputStream templateInputStream = new ByteArrayInputStream(Resources.toByteArray(Resources.getResource("template/报价单-其它.xlsx")));
+
+        ExportWithTemplate exportForm = new Gson().fromJson(json, ExportWithTemplate.class);
+        exportForm.export(templateInputStream, new FileOutputStream("temp.xlsx"));
+    }
 
     @Test
     void 通过单元格导出() throws IOException {
